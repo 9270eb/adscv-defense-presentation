@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>CTF Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="9270eb" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra_fit-screen/fit-screen.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="libs/js-cookie/js.cookie.js"></script>
+    <script src="libs/peerjs/peerjs.min.js"></script>
+    <script src="libs/tiny.toast/toast.min.js"></script>
+    <link href="libs/xaringanExtra-broadcast/broadcast.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-broadcast/broadcast.js"></script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"x80eae72f9954a50b590d4b9dafb3012","expires":14}</script>
+    <script src="libs/himalaya/himalaya.js"></script>
+    <link href="libs/editable/editable.css" rel="stylesheet" />
+    <script src="libs/editable/editable.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# CTF Dashboard
+## <br/>Capstone project Defense<br/>Applied Data Science Communication and Visualization
+### 9270eb
+### Extension School, EPFL
+### 2022/02/02 (updated: 2022-02-04)
+
+---
+
+
+class: center, middle
+
+
+
+<div>
+<style type="text/css">.xaringan-extra-logo {
+width: 252px;
+height: 55.75px;
+z-index: 0;
+background-image: url(img/logo-CH.svg);
+background-size: contain;
+background-repeat: no-repeat;
+position: absolute;
+top:0em;left:0em;
+}
+</style>
+<script>(function () {
+  let tries = 0
+  function addLogo () {
+    if (typeof slideshow === 'undefined') {
+      tries += 1
+      if (tries < 10) {
+        setTimeout(addLogo, 100)
+      }
+    } else {
+      document.querySelectorAll('.remark-slide-content:not(.title-slide):not(.inverse):not(.hide_logo)')
+        .forEach(function (slide) {
+          const logo = document.createElement('div')
+          logo.classList = 'xaringan-extra-logo'
+          logo.href = null
+          slide.appendChild(logo)
+        })
+    }
+  }
+  document.addEventListener('DOMContentLoaded', addLogo)
+})()</script>
+</div>
+
+
+
+
+# CTFDashboard
+
+---
+class: inverse, center, middle
+
+# What is Capture The Flag (CTF) Event ?
+
+&lt;iframe width="800" 
+height="450" 
+src="https://www.youtube.com/embed/meC8O9Mptz4" 
+title="YouTube video player" frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; 
+encrypted-media; gyroscope; 
+picture-in-picture" allowfullscreen&gt;
+&lt;/iframe&gt;
+
+---
+
+# Specific CTF Setup
+
+![](img/setup.svg)
+---
+class: left
+
+# Dashboard's goals
+
+![](img/goal.svg)
+
+.footnote[
+[1] Situation awareness
+
+[2] Performance indicators
+
+[3] Debriefing]
+
+---
+class: inverse, center, middle
+
+# Get Started - with data
+
+---
+
+# Data: Availability
+.panelset[
+.panel[.panel-name[Data]
+```
+A tibble: 20,322 x 7
+timestamp           success total service fct      ratio team  
+&lt;dttm&gt;                &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
+1 2021-02-02 07:27:16       3     3 dns     ssh          1 Team 1
+2 2021-02-02 07:27:16       2     2 website register     1 Team 1
+3 2021-02-02 07:27:26       4     4 website index        1 Team 1
+4 2021-02-02 07:28:16       1     1 website comments     1 Team 1
+5 2021-02-02 07:28:26       1     1 mail    sending      1 Team 1
+6 2021-02-02 07:28:26       4     4 dns     ssh          1 Team 1
+7 2021-02-02 07:28:36       2     2 website register     1 Team 1
+8 2021-02-02 07:28:56       1     1 website register     1 Team 1
+9 2021-02-02 07:29:26       1     1 website comments     1 Team 1
+10 2021-02-02 07:29:36       1     1 website comments     1 Team 1
+```
+]
+.panel[.panel-name[Plot Availability summary]
+![](img/availability_plot.png)
+]
+.panel[.panel-name[Plot Availability]
+![](img/availability_plot_full.png)
+]
+]
+---
+## Data: Attack + Detection = Defense
+
+.panelset[
+.panel[.panel-name[Data]
+
+```r
+# A tibble: 85 x 12
+team   identifier weight attack_vector description requirements start_time end_time source_ip
+&lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;    
+1 Team 4 SCENARIO …      1 Brute-Force   Brute-forc… DNS server … 2021-02-0… 2021-02… 80.70.12…
+2 Team 1 SCENARIO …      1 Brute-Force   Brute-forc… DNS server … 2021-02-0… 2021-02… 80.70.12…
+3 Team 3 SCENARIO …      1 Brute-Force   Brute-forc… DNS server … 2021-02-0… 2021-02… 80.70.12…
+4 Team 2 SCENARIO …      1 Brute-Force   Brute-forc… DNS server … 2021-02-0… 2021-02… 80.70.12…
+5 Team 2 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 103.76.1…
+6 Team 4 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 103.76.1…
+7 Team 3 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 103.76.1…
+8 Team 1 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 103.76.1…
+9 Team 2 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 20.143.2…
+10 Team 4 SCENARIO …      1 Network Reco… PING sweep… DMZ can be … 2021-02-0… 2021-02… 20.143.2…
+# … with 75 more rows, and 3 more variables: targets &lt;chr&gt;, detec &lt;dbl&gt;, attack_result &lt;chr&gt;
+```
+]
+.panel[.panel-name[Plot Attack]
+![](img/attack_plot.png)
+]
+.panel[.panel-name[Plot Detection]
+![](img/detection_plot.png)
+]
+.panel[.panel-name[Plot Defense]
+![:scale 40%](img/defense_plot.png)
+]
+]
+---
+
+# Data: Report
+
+.panelset[
+.panel[.panel-name[Data]
+
+```r
+# A tibble: 8 x 10
+report description  team_1_score team_1_comment    team_2_score team_2_comment    team_3_score
+&lt;chr&gt;  &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    &lt;dbl&gt;
+1 1      Breifing 1 …            5 Good summary, cl…            5 clear, team mana…            4
+2 2      Network Dia…            1 Machine network …            4 Good overview, m…            2
+3 3      Monitoring …            2 Idea given, very…            1 Nothing tangible…            1
+4 4      Briefing 2 …            0 NA                           0 NA                           0
+5 5      Hardening R…            3 NA                           2 NA                           1
+6 6      Briefing 3 …            1 clear explanatio…            2 management and a…            1
+7 7      Briefing 4 …            0 NA                           0 NA                           0
+8 8      Briefing 5 …            0 NA                           0 NA                           0
+# … with 3 more variables: team_3_comment &lt;chr&gt;, team_4_score &lt;dbl&gt;, team_4_comment &lt;chr&gt;
+```
+]
+.panel[.panel-name[Plot]
+![](img/report_plot.png)
+]
+]
+---
+
+# Data: Soft Skills
+
+.panelset[
+.panel[.panel-name[Data]
+
+```r
+# A tibble: 3 x 9
+criteria  team_1_score team_1_comment  team_2_score team_2_comment team_3_score team_3_comment
+&lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;         
+1 Communic…            1 troubles with …            2 clear communi…            2 they communic…
+2 Collabor…            1 difficult to m…            2 mostly by pai…            2 leadership is…
+3 Balance              1 NA                         2 NA                        2 NA            
+# … with 2 more variables: team_4_score &lt;dbl&gt;, team_4_comment &lt;chr&gt;
+```
+]
+.panel[.panel-name[Plot]
+![](img/soft_plot.png)
+]
+]
+
+---
+class: inverse, middle, center
+
+# The shiny app
+
+---
+
+# Design - concept
+
+![:scale 200%](img/tab_bar.png)
+1. Data importation
+
+1. Live Defense &gt; Tab shown during the CTF
+    
+1. Comparison &gt; team benchmarking over 5 criteria
+
+1. Evolution &gt; allow team's progress
+
+1. Details &gt; for specific highlights or discussion details
+
+1. Export &gt; Allow Team to get their performance report
+
+---
+
+# App challenges
+
+.panelset.sideways[
+.panel[.panel-name[Summary]
+1. Data standardization and code re-use &lt;sup&gt;1&lt;/sup&gt;
+1. Data transfer between module
+1. Time manipulation and slider &lt;sup&gt;2&lt;/sup&gt;
+1. Evolution of table -&gt; a new way of presenting data : dumbbell plot&lt;sup&gt;7&lt;/sup&gt;
+1. Export with pdf markdown headache and corporate fonts (Frutiger) &lt;sup&gt;3&lt;/sup&gt;
+1. Persistent configuration
+1. Time of last update vs current time &lt;sup&gt;2&lt;/sup&gt;
+1. Custom theme &lt;sup&gt;4 6&lt;/sup&gt;
+1. Human interaction - layout and controls choices
+1. Plot adaptation to shiny &lt;sup&gt;5&lt;/sup&gt;
+]
+.panel[.panel-name[Day 1 vs Day 2]
+![](img/evolution_b2.png)
+]
+.panel[.panel-name[Defense period]
+![](img/evolution_b3.png)
+]
+.panel[.panel-name[Persistent config]
+
+```r
+mod_04_live_server &lt;- function(id, r) {
+  moduleServer(id, function(input, output, session) {
+    ns &lt;- session$ns
+    ......
+     observeEvent( input$team_selected , {
+      r$config$team_selected &lt;- input$team_selected
+    })
+    
+    observeEvent( r$config$team_selected ,{ 
+      req(r$dataset$summary())
+      colonnes &lt;- get_team_list(r$dataset$summary())
+      updateSelectInput(session,
+                        "team_selected",
+                        choices = colonnes,
+                        selected = r$config$team_selected)
+    })
+```
+]
+.panel[.panel-name[Theme]
+After doing ggplot2 custome theme, [admin swiss styleguide](https://swiss.github.io/styleguide/en/), the winner is `bslib` and `thematic`![:scale 10%](img/thematic-logo.png)
+
+```r
+##############################
+# bslib theme - shiny app
+#############################
+my_theme &lt;- bslib::bs_theme(
+  version = 4,
+  bootswatch = "lumen",
+  base_font = 'Frutiger')
+```
+]
+.panel[.panel-name[Controls]
+.pull-left[![:scale 80%](img/controls.png)] 
+.pull-right[![:scale 90%](img/report_download.png)]
+]
+]
+
+.footnote[
+[1]  ![:scale 10%](img/thinkr-hex-golem.png) 
+[2] ![:scale 10%](img/lubridate.png) [3] ![:scale 10%](img/rmarkdown.png) 
+[4] ![:scale 10%](img/ggplot2-logo.png) [5] ![:scale 10%](img/shiny-logo.png)
+[6] ![:scale 10%](img/patchwork-logo.png) [7] ![](img/logo-exts.svg)  [8] DT [9] bslib
+]
+---
+
+# Design evolution
+
+.panelset[
+.panel[.panel-name[Old]
+![](img/live_old_design_full.png)
+]
+.panel[.panel-name[New]
+![](img/live_new_design.png)
+]
+]
+
+???
+
+## TODO
+[x] live move from ++++ to / / / / 
+[x] change activate brush to button selection
+[x] evolution add a tittle to button
+[/] checkboxGroupInput
+[x] change to config for day selected (Availability, detection, live)
+[x] change show data per service too radio button 
+ data per serice
+ data per team it was a checkbox move to radio button
+- availability
+- detection
+- report
+- soft skills
+[x] Add plots in report
+[x] check Readme.Rmd
+
+
+---
+# Future challenges
+
+1. Add Time to detection metric
+    
+    + Collect precise logs about detection (timestamp)
+    
+    + Analyse and linked them with attacks to determine Time to detection metric
+    
+    + Produce a dumbbell plot
+
+1.  Use `thematic`![:scale 10%](img/thematic-logo.png) for theme in the whole app
+    
+    + refactor dedicated theme in ggplot2
+
+
+
+---
+class: inverse, left
+
+# Feedback
+
+.can-edit[You can edit this to give feedback]
+
+---
+class: center, top
+
+# Thanks!
+
+.bg-washed-green.b--dark-green.ba.bw2.br3.shadow-5.ph4.mt5[
+@Extension school team, Giulia, Enrico, Iegor, 
+
+for support and nice events
+]
+
+.footnote[
+.right[
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan)![:scale 10%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/xaringan.png).
+
+Icon comes from [Noun Project](https://thenounproject.com)
+]
+]
+
+---
+
+# Screenshot: Export
+![](img/export.png)
+
+---
+
+# Screenshot: Evolution
+
+![](img/evolution_full.png)
+
+??? 
+usethis::use_github_pages(branch='publish',path = "/docs")
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(120000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
